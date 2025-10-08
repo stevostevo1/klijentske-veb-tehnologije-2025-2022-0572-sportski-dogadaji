@@ -1,0 +1,33 @@
+
+name: sportster
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    env_file:
+      - sportster.env
+    ports:
+      - "3000:80"  
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      replicas: 3
+  db:
+    image: postgres:latest
+    env_file:
+      - db.env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+networks:
+    app-network:
+     driver: bridge
+volumes:
+  sportster-data:
+  postgres-data:
